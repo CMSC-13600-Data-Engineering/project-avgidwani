@@ -1,0 +1,10 @@
+(venv) hanate333@Aseems-MacBook-Pro attendancechimp % sqlite3 db.sqlite3
+SQLite version 3.41.2 2023-03-22 11:56:21
+Enter ".help" for usage hints.
+sqlite> .tables
+auth_group                  auth_user_user_permissions
+auth_group_permissions      django_admin_log          
+auth_permission             django_content_type       
+auth_user                   django_migrations         
+auth_user_groups            django_session            
+sqlite> 
