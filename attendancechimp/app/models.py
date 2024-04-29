@@ -156,3 +156,28 @@ def process_upload(course, student, image):
     upload = QRCodeUpload(course=course, student=student, image=image)
     upload.save()
     return upload
+
+def getUploadsForCourse(id):
+    
+    valid_uploads = []
+
+    try:
+        course = Course.objects.get(id)
+    except Course.DoesNotExist:
+        return valid_uploads
+
+    for upload in QRCodeUpload.objects.filter(course=course):
+        if course.class_start <= upload.uploaded.time() <= course.class_end:
+            if course.m_class == True and upload.uploaded.strftime('%a') == 'Mon':
+                valid_uploads.append(upload)
+            elif course.tu_class == True and upload.uploaded.strftime('%a') == 'Tue':
+                valid_uploads.append(upload)
+            elif course.w_class == True and upload.uploaded.strftime('%a') == 'Wed':
+                valid_uploads.append(upload)
+            elif course.th_class == True and upload.uploaded.strftime('%a') == 'Thu':
+                valid_uploads.append(upload)
+            elif course.f_class == True and upload.uploaded.strftime('%a') == 'Fri':
+                valid_uploads.append(upload)
+            else: return valid_uploads
+              
+    return valid_uploads

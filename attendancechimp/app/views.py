@@ -16,6 +16,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login
 from django.core.exceptions import PermissionDenied
+from django.http import JsonResponse
 
 # these are import from your model
 from .models import *
@@ -127,6 +128,50 @@ def qr_upload(request, errors=""):
     up = up[0]
 
     return render(request, 'app/qr_upload.html', {'is_student': not up.is_instructor, 'errors': errors})
+
+def getUploads(request):
+     
+     if not request.user.is_authenticated:
+        raise PermissionDenied
+     
+     #make sure it is an instructor
+     up = UniversityPerson.objects.filter(user_id = request.user.id)
+
+     if not up.is_instructor:
+         raise PermissionDenied
+     
+     #check if there is a course argument
+     course_id = request.GET.get('course')
+
+     if not course_id:
+         raise PermissionDenied
+     
+     empty_json = {}
+     json_list = []
+
+     uploads = getUploadsForCourse(int(course_id))
+
+     for upload in uploads:
+         empty_json = {'username' : upload.student.user.name,
+                       'upload_time_as_string' : str(upload.uploaded)
+                      }
+         json_list.append(empty_json)
+         return json_list
+     
+     response = JsonResponse(json_list, safe=False)
+     
+     return response
+
+     
+
+
+
+
+
+
+
+
+
 
 
 # below are the functions that handle POST requests
